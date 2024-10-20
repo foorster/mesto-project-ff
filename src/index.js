@@ -1,7 +1,7 @@
 const placesList = document.querySelector(".places__list");
 import "./styles/index.css";
 
-import { initialCards } from "./cards.js";
+import { initialCards } from "./components/cards.js";
 import { createCard, deleteCard, likeCard } from "./components/card.js";
 import {
   openPopup,
