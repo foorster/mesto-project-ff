@@ -5,7 +5,7 @@ export function createCard(cardData, deleteCard, openImage, likeCard) {
     .cloneNode(true);
   const cardElementImage = cardElement.querySelector(".card__image");
   cardElementImage.src = cardData.link;
-  cardElementImage.alt = cardData.alt;
+  cardElementImage.alt = cardData.name;
   cardElement.querySelector(".card__title").textContent = cardData.name;
 
   const deleteButton = cardElement.querySelector(".card__delete-button");
@@ -17,7 +17,7 @@ export function createCard(cardData, deleteCard, openImage, likeCard) {
   likeButton.addEventListener("click", likeCard);
 
   cardElementImage.addEventListener("click", () => {
-    openImage(cardData.link, cardData.alt);
+    openImage(cardElementImage.src, cardElementImage.alt);
   });
 
   return cardElement;
