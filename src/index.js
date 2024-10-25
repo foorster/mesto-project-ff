@@ -5,6 +5,7 @@ const editModal = document.querySelector(".popup_type_edit");
 
 const addButton = document.querySelector(".profile__add-button");
 const addCardModal = document.querySelector(".popup_type_new-card");
+const addCardForm = addCardModal.querySelector(".popup__form");
 
 const closeButtonList = document.querySelectorAll(".popup__close");
 
@@ -16,11 +17,11 @@ const jobInput = formEditElement.querySelector(
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
-const addCardForm = addCardModal.querySelector(".popup__form");
-
 const popupTypeImage = document.querySelector(".popup_type_image");
 const image = popupTypeImage.querySelector(".popup__image");
 const caption = popupTypeImage.querySelector(".popup__caption");
+
+const popupList = document.querySelectorAll(".popup");
 
 import "./styles/index.css";
 
@@ -53,7 +54,7 @@ function openImage(srcImage, altImage) {
   openModal(popupTypeImage);
 }
 
-//Закрытие любого попапа при клике на кнопку крестик
+//Лисенер крестика
 closeButtonList.forEach((el) => {
   el.addEventListener("click", function () {
     const popup = el.closest(".popup");
@@ -61,17 +62,24 @@ closeButtonList.forEach((el) => {
   });
 });
 
-// Обработчик «отправки» формы, хотя пока
-// она никуда отправляться не будет
+//Лисенер оверлея
+popupList.forEach((el) => {
+  el.addEventListener("click", function (evt) {
+    if (evt.currentTarget === evt.target) {
+      closeModal(evt.currentTarget);
+    }
+  });
+});
+
+// Обработчик «отправки» формы Edit
 function editFormSubmit(evt) {
-  evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
+  evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы
   profileTitle.textContent = nameInput.value;
   profileDescription.textContent = jobInput.value;
   closeModal(editModal);
 }
 
-// Прикрепляем обработчик к форме:
-// он будет следить за событием “submit” - «отправка»
+// Слушает, что делать при нажатии на кнопку отправки
 formEditElement.addEventListener("submit", editFormSubmit);
 
 // Создаем новую карточку с помощью createCard
