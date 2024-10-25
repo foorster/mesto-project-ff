@@ -7,10 +7,7 @@ export function openModal(popup) {
 //Функция, закрывающая попап с помощью эскейп
 function closeModalEsc(evt) {
   if (evt.key === "Escape") {
-    const popup = closeModal(document.querySelector(".popup_is-opened"));
-    if (popup) {
-      closeModal(popup);
-    }
+    closeModal(document.querySelector(".popup_is-opened"));
   }
 }
 
