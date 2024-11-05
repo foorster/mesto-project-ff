@@ -10,3 +10,11 @@
 @import url("../blocks/popup/popup.css");
 @import url("../blocks/popup/_is-animated/popup_is-animated.css");
 @import url("../blocks/popup/_is-opened/popup_is-opened.css");
+
+@import url('../blocks/popup/__label/popup__label.css');
+@import url('../blocks/popup/__input/__type/popup__input_type_error.css');
+@import url('../blocks/popup/__input-error/popup__input-error.css');
+@import url('../blocks/popup/__input/__type/popup__input_type_visible.css');
+@import url('../blocks/popup/__submit/popup__submit.css');
+@import url('../blocks/popup/__submit/__disabled/popup__submit_disabled.css');
+
