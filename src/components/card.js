@@ -1,4 +1,4 @@
-export function createCard(cardData, deleteCard, openImage, likeCard) {
+export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
   const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate
     .querySelector(".places__item")

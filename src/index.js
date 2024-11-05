@@ -29,22 +29,52 @@ const buttonEditProfile = formEditProfile.querySelector(
 );
 
 const formAddPlace = document.querySelector(".popup__form_add_place");
-const buttonAddPlace = formAddPlace.querySelector(
-  ".popup__button_add_place"
-);
+const buttonAddPlace = formAddPlace.querySelector(".popup__button_add_place");
 
 import "./styles/index.css";
 
 import { initialCards } from "./components/cards.js";
 import { createCard, deleteCard, likeCard } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
-import { enableValidationCheck, clearValidation, classListForm} from "./components/validate.js";
+import {
+  enableValidationCheck,
+  clearValidation,
+  classListForm,
+} from "./components/validate.js";
+import {
+  getProfileData,
+  getCards,
+  updateProfileData,
+} from "./components/api.js";
 
-
-initialCards.forEach((cardData) => {
+/*initialCards.forEach((cardData) => {
   const cardElement = createCard(cardData, deleteCard, openImage, likeCard);
   placesList.append(cardElement);
-});
+});*/
+
+// Отрисовываем карточки
+const renderCards = (cardsData, userId) => {
+  cardsData.forEach((cardData) => {
+    const cardElement = createCard(
+      cardData,
+      userId,
+      deleteCard,
+      openImage,
+      likeCard
+    );
+    placesList.prepend(cardElement);
+  });
+};
+
+Promise.all([getProfileData(), getCards()])
+  .then(([userData, cardsData]) => {
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    renderCards(cardsData, userData);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 //Открытие попапа при клике на кнопку EDIT
 editButton.addEventListener("click", function () {
@@ -88,8 +118,14 @@ popupList.forEach((el) => {
 // Обработчик «отправки» формы Edit
 function editFormSubmit(evt) {
   evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
+  updateProfileData(nameInput.value, jobInput.value)
+    .then((data) => {
+      profileTitle.textContent = data.name;
+      profileDescription.textContent = data.about;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
   closeModal(editModal);
 }
 
@@ -115,7 +151,6 @@ function addNewCard(evt) {
 
 // Создаем карточку при отправке формы
 addCardForm.addEventListener("submit", addNewCard);
-
 
 // Запускаем валидацию
 enableValidationCheck(classListForm);
