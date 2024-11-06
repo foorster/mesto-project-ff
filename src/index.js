@@ -30,6 +30,8 @@ const buttonEditProfile = formEditProfile.querySelector(
 
 const formAddPlace = document.querySelector(".popup__form_add_place");
 const buttonAddPlace = formAddPlace.querySelector(".popup__button_add_place");
+const inputAddName = formAddPlace.querySelector(".popup__input_type_card-name");
+const inputAddLink = formAddPlace.querySelector(".popup__input_type_url");
 
 import "./styles/index.css";
 
@@ -45,6 +47,7 @@ import {
   getProfileData,
   getCards,
   updateProfileData,
+  addCard,
 } from "./components/api.js";
 
 /*initialCards.forEach((cardData) => {
@@ -68,9 +71,18 @@ const renderCards = (cardsData, userId) => {
 
 Promise.all([getProfileData(), getCards()])
   .then(([userData, cardsData]) => {
+    cardsData.sort((a,b)=>{
+      if (a.createdAt < b.createdAt) {
+        return -1
+      } else if (a.createdAt > b.createdAt) {
+        return 1
+      }
+      return 0
+    })
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
-    renderCards(cardsData, userData);
+    renderCards(cardsData, userData._id);
+
   })
   .catch((err) => {
     console.log(err);
@@ -142,15 +154,36 @@ function createNewCard() {
 }
 
 // Сохраняем данные карточки и очищаем форму
-function addNewCard(evt) {
+/*function addNewCard(evt) {
   evt.preventDefault();
   placesList.prepend(createNewCard());
   closeModal(addCardModal);
   addCardForm.reset();
+}*/
+
+
+async function addCardSubmit(evt) {
+  evt.preventDefault();
+    const myUserId = '5fc12cf0-959f-4012-b329-994066b1e5bb';
+    const addCardConst = addCard(inputAddName.value, inputAddLink.value);
+    addCardConst.then((card)=>{
+      const newCardElement = createCard(
+        card,
+        myUserId,
+        deleteCard,
+        openImage,
+        likeCard
+      );
+      console.log(card)
+      placesList.prepend(newCardElement);
+    })
+    
+    closeModal(addCardModal);
+    addCardForm.reset();
 }
 
 // Создаем карточку при отправке формы
-addCardForm.addEventListener("submit", addNewCard);
+addCardForm.addEventListener("submit", addCardSubmit);
 
 // Запускаем валидацию
 enableValidationCheck(classListForm);

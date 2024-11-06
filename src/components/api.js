@@ -48,13 +48,7 @@ export function updateProfileData(name, about) {
 
 
 // Отправляем POST-запрос чтобы добавить на сервер новую карточку
-export function addNewCard(name, link) {
-	if (!name || !link) { // Проверка, если не будет названия или ссылки на картинку, выдай ошибку
-		console.error('Нет названия и/или картинки карточки')
-		return Promise.reject('Нет названия и/или картинки карточки')
-	}
-
-	console.log('Добавили карточку:', {name, link}) // Вывели в консоль добавленную карточку
+export function addCard(name, link) {
 
 	return fetch(`${config.baseUrl}${config.cohortId}/cards`, {
 		method: 'POST',
