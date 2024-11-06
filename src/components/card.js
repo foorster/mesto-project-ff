@@ -12,10 +12,10 @@ export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
 
   const deleteButton = cardElement.querySelector(".card__delete-button");
 
-  if (userId === cardData.owner._id) {
+  if (userId === cardData.owner._id) { // Если айди пользователя это мое айди, то повесь слушатель удаления на кнопку корзины
     if (deleteButton) {
-      deleteButton.addEventListener("click", (event) =>
-        deleteCard(event, cardData._id)
+      deleteButton.addEventListener("click", (evt) =>
+        deleteCard(evt, cardData._id) 
       );
     }
   } else {
@@ -34,11 +34,12 @@ export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
   return cardElement;
 }
 
-export function deleteCard(event, cardId) {
-  deleteNewCard(cardId)
-    .then(event.target.closest(".card").remove())
+export function deleteCard(evt, cardId) {
+  deleteNewCard(cardId) // Если получилось удалить с сервера
+    .then(evt.target.closest(".card").remove())  // То удали отрисовку
     .catch((err) => {
-      console.error(err);
+      console.error(`Ошибка. Возможно не получилось удалить 
+        карточку: ${err}`);
     });
 }
 

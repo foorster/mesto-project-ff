@@ -35,7 +35,7 @@ const inputAddLink = formAddPlace.querySelector(".popup__input_type_url");
 
 import "./styles/index.css";
 
-import { initialCards } from "./components/cards.js";
+/*import { initialCards } from "./components/cards.js";*/
 import { createCard, deleteCard, likeCard } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
 import {
@@ -56,7 +56,7 @@ import {
 });*/
 
 // Отрисовываем карточки
-const renderCards = (cardsData, userId) => {
+const showCards = (cardsData, userId) => {
   cardsData.forEach((cardData) => {
     const cardElement = createCard(
       cardData,
@@ -71,21 +71,27 @@ const renderCards = (cardsData, userId) => {
 
 Promise.all([getProfileData(), getCards()])
   .then(([userData, cardsData]) => {
-    cardsData.sort((a,b)=>{
+    // Получили ответ от сервера в виде объекта пользователя и карточек
+    // Сортируем карточки, чтобы вверху сайта отображались последние добавленные
+    cardsData.sort((a, b) => {
       if (a.createdAt < b.createdAt) {
-        return -1
+        return -1;
       } else if (a.createdAt > b.createdAt) {
-        return 1
+        return 1;
       }
-      return 0
-    })
+      return 0;
+    });
+    // Записываем полученные данные из объекта пользователя в верстку
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
-    renderCards(cardsData, userData._id);
-
+    // Передаем полученные с сервера данные в функцию отрисовки
+    showCards(cardsData, userData._id);
   })
   .catch((err) => {
-    console.log(err);
+    console.log(
+      `Ошибка. Не получилось записать информацию о 
+      пользователе страницы, либо отобразить карточки: ${err}`
+    );
   });
 
 //Открытие попапа при клике на кнопку EDIT
@@ -130,13 +136,15 @@ popupList.forEach((el) => {
 // Обработчик «отправки» формы Edit
 function editFormSubmit(evt) {
   evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы
-  updateProfileData(nameInput.value, jobInput.value)
+  updateProfileData(nameInput.value, jobInput.value) // PATCH
     .then((data) => {
+      // Если получилось сохранить данные, то запиши их в верстку
       profileTitle.textContent = data.name;
       profileDescription.textContent = data.about;
     })
     .catch((err) => {
-      console.error(err);
+      console.error(`Ошибка. Возможно не получилось загрузить 
+      данные пользователя в профиль: ${err}`);
     });
   closeModal(editModal);
 }
@@ -144,42 +152,28 @@ function editFormSubmit(evt) {
 // Слушает, что делать при нажатии на кнопку отправки
 formEditElement.addEventListener("submit", editFormSubmit);
 
-// Создаем новую карточку с помощью createCard
-function createNewCard() {
-  const newCardData = {
-    name: addCardForm.querySelector('input[name="place-name"]').value,
-    link: addCardForm.querySelector('input[name="link"]').value,
-  };
-  return createCard(newCardData, deleteCard, openImage, likeCard);
-}
-
-// Сохраняем данные карточки и очищаем форму
-/*function addNewCard(evt) {
-  evt.preventDefault();
-  placesList.prepend(createNewCard());
-  closeModal(addCardModal);
-  addCardForm.reset();
-}*/
-
-
 async function addCardSubmit(evt) {
+  //
   evt.preventDefault();
-    const myUserId = '5fc12cf0-959f-4012-b329-994066b1e5bb';
-    const addCardConst = addCard(inputAddName.value, inputAddLink.value);
-    addCardConst.then((card)=>{
+  const me = await getProfileData(); // Объект с моими данными
+  addCard(inputAddName.value, inputAddLink.value) // POST
+    .then((card) => {
+      // Если получилось, создай новую карточку (передали данные)
       const newCardElement = createCard(
         card,
-        myUserId,
+        me._id, // Это моя карточка
         deleteCard,
         openImage,
         likeCard
       );
-      console.log(card)
       placesList.prepend(newCardElement);
-    })
-    
-    closeModal(addCardModal);
-    addCardForm.reset();
+    });
+  (err) => {
+    console.error(`Ошибка. Возможно не получилось запостить 
+    карточку: ${err}`);
+  };
+  closeModal(addCardModal);
+  addCardForm.reset();
 }
 
 // Создаем карточку при отправке формы
