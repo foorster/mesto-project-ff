@@ -63,7 +63,7 @@ export function addCard(name, link) {
 
 //Вместо cardId в URL нужно подставить свойство _id соответствующей карточки
 // Делаем DELETE-запрос на удаление карточки
-function deleteCard(cardId) { // Функции удаления карточки передаем ее айди (надо будет проверить айди на собственность)
+export function deleteNewCard(cardId) { // Функции удаления карточки передаем ее айди (надо будет проверить айди на собственность)
 	return fetch(`${config.baseUrl}${config.cohortId}/cards/${cardId}`, {
 		method: 'DELETE',
 		headers: config.headers,

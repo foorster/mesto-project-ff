@@ -1,3 +1,5 @@
+import { deleteNewCard } from "./api.js";
+
 export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
   const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate
@@ -9,8 +11,17 @@ export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
   cardElement.querySelector(".card__title").textContent = cardData.name;
 
   const deleteButton = cardElement.querySelector(".card__delete-button");
-  if (deleteButton) {
-    deleteButton.addEventListener("click", deleteCard);
+
+  if (userId === cardData.owner._id) {
+    if (deleteButton) {
+      deleteButton.addEventListener("click", (event) =>
+        deleteCard(event, cardData._id)
+      );
+    }
+  } else {
+    if (deleteButton) {
+      deleteButton.remove();
+    }
   }
 
   const likeButton = cardElement.querySelector(".card__like-button");
@@ -23,8 +34,12 @@ export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
   return cardElement;
 }
 
-export function deleteCard(event) {
-  event.target.closest(".card").remove();
+export function deleteCard(event, cardId) {
+  deleteNewCard(cardId)
+    .then(event.target.closest(".card").remove())
+    .catch((err) => {
+      console.error(err);
+    });
 }
 
 // Функция лайка
