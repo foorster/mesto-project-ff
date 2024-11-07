@@ -45,7 +45,7 @@ const profileSubmitButton = document.querySelector(
 import "./styles/index.css";
 
 /*import { initialCards } from "./components/cards.js";*/
-import { createCard, deleteCard, likeCard } from "./components/card.js";
+import { createCard, deleteCard, switchLike } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
 import {
   enableValidationCheck,
@@ -73,7 +73,7 @@ const showCards = (cardsData, userId) => {
       userId,
       deleteCard,
       openImage,
-      likeCard
+      switchLike
     );
     placesList.prepend(cardElement);
   });
@@ -175,7 +175,7 @@ async function addCardSubmit(evt) {
         me._id, // Это моя карточка
         deleteCard,
         openImage,
-        likeCard
+        switchLike
       );
       placesList.prepend(newCardElement);
     });

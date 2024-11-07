@@ -1,6 +1,12 @@
 import { deleteNewCard, putLikeCard, delDislikeCard } from "./api.js";
 
-export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
+export function createCard(
+  cardData,
+  userId,
+  deleteCard,
+  openImage,
+  switchLike
+) {
   const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -13,7 +19,7 @@ export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
   const deleteButton = cardElement.querySelector(".card__delete-button");
 
   if (userId === cardData.owner._id) {
-    // Если айди пользователя это мое айди, то повесь слушатель удаления на кнопку корзины
+    // Если айди пользователя это мой айди, то повесь слушатель удаления на кнопку корзины
     if (deleteButton) {
       deleteButton.addEventListener("click", (evt) =>
         deleteCard(evt, cardData._id)
@@ -26,24 +32,19 @@ export function createCard(cardData, userId, deleteCard, openImage, likeCard) {
   }
 
   const likeCounter = cardElement.querySelector(".card__like-counter");
-
   if (likeCounter) {
     likeCounter.textContent = cardData.likes.length;
   }
 
   const likeButton = cardElement.querySelector(".card__like-button");
+  likeButton.addEventListener("click", (evt) => {
+    switchLike(evt, cardData._id);
+  });
+
+  // Если лайк мой, закрась его
   const result = cardData.likes.some((like) => like._id === userId);
   if (result) {
     likeButton.classList.add("card__like-button_is-active");
-    likeButton.addEventListener(
-      "click",
-      (evt) => disLikeCard(evt, cardData._id),
-      { once: true }
-    );
-  } else {
-    likeButton.addEventListener("click", (evt) => likeCard(evt, cardData._id), {
-      once: true,
-    });
   }
 
   cardElementImage.addEventListener("click", () => {
@@ -62,45 +63,27 @@ export function deleteCard(evt, cardId) {
     });
 }
 
-export function likeCard(evt, cardId) {
-  putLikeCard(cardId)
-    .then((cardData) => {
-      const closestCard = evt.target.closest(".card");
-      const childLikeButton = closestCard.querySelector(".card__like-button");
-      const childLikeCounter = closestCard.querySelector(".card__like-counter");
-      childLikeButton.classList.add("card__like-button_is-active");
-      childLikeCounter.textContent = cardData.likes.length;
-      childLikeButton.addEventListener(
-        "click",
-        (evt) => disLikeCard(evt, cardData._id),
-        { once: true }
-      );
-    })
-    .catch((err) => {
-      console.error(`Ошибка. ${err}`);
-    });
-}
+export function switchLike(evt, cardId) {
+  const closestCard = evt.target.closest(".card");
+  const likeButton = closestCard.querySelector(".card__like-button");
+  const childLikeCounter = closestCard.querySelector(".card__like-counter");
+  likeButton.classList.toggle("card__like-button_is-active");
 
-export function disLikeCard(evt, cardId) {
-  delDislikeCard(cardId)
-    .then((cardData) => {
-      const closestCard = evt.target.closest(".card");
-      const childLikeButton = closestCard.querySelector(".card__like-button");
-      const childLikeCounter = closestCard.querySelector(".card__like-counter");
-      childLikeButton.classList.remove("card__like-button_is-active");
-      childLikeCounter.textContent = cardData.likes.length;
-      childLikeButton.addEventListener(
-        "click",
-        (evt) => likeCard(evt, cardData._id),
-        { once: true }
-      );
-    })
-    .catch((err) => {
-      console.error(`Ошибка. ${err}`);
-    });
+  if (likeButton.classList.contains("card__like-button_is-active")) {
+    putLikeCard(cardId)
+      .then((cardData) => {
+        childLikeCounter.textContent = cardData.likes.length;
+      })
+      .catch((err) => {
+        console.error(`Ошибка. Данные о лайке не подгрузились: ${err}`);
+      });
+  } else {
+    delDislikeCard(cardId)
+      .then((cardData) => {
+        childLikeCounter.textContent = cardData.likes.length;
+      })
+      .catch((err) => {
+        console.error(`Ошибка. Данные о дизлайке не подгрузились: ${err}`);
+      });
+  }
 }
-
-// Функция лайка
-/*export function likeCard(evt) {
-  evt.target.classList.toggle("card__like-button_is-active");
-}*/
