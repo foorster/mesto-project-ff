@@ -73,7 +73,7 @@ export function deleteNewCard(cardId) { // Функции удаления ка�
 
 
 // Делаем PUT-запрос чтобы лайкнуть карточку 
-function likeCard(cardId) { // Функции лайка надо передать айди карточки
+export function putLikeCard(cardId) { // Функции лайка надо передать айди карточки
 	return fetch(`${config.baseUrl}${config.cohortId}/cards/likes/${cardId}`, {
 		method: 'PUT',
 		headers: config.headers,
@@ -82,7 +82,7 @@ function likeCard(cardId) { // Функции лайка надо передат
 }
 
 // Делаем DELETE-запрос на удаление лайка с карточки
-export function dislikeCard(cardId) { // Функции дизлайка надо передать айди карточки
+export function delDislikeCard(cardId) { // Функции дизлайка надо передать айди карточки
 	return fetch(`${config.baseUrl}${config.cohortId}/cards/likes/${cardId}`, {
 		method: 'DELETE',
 		headers: config.headers,
@@ -91,7 +91,7 @@ export function dislikeCard(cardId) { // Функции дизлайка над�
 }
 
 // Отправляем  PATCH-запрос чтобы сменить аватар
-function changeAvatar(url) { // Передаем функции ссылку аватарки
+export function changeAvatar(url) { // Передаем функции ссылку аватарки
 	return fetch(`${config.baseUrl}${config.cohortId}/users/me/avatar`, {
 		method: 'PATCH',
 		headers: config.headers,

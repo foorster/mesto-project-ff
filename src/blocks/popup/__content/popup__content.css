@@ -9,6 +9,10 @@
   padding: 34px 36px;
 }
 
+.popup__content-image-form{
+  min-height: 0px;
+}
+
 @media screen and (max-width: 568px) {
   .popup__content {
     width: 100%;

@@ -14,6 +14,7 @@ const nameInput = formEditElement.querySelector(".popup__input_type_name");
 const jobInput = formEditElement.querySelector(
   ".popup__input_type_description"
 );
+const imageInput = document.querySelector(".popup__input_profile-image");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
@@ -33,6 +34,14 @@ const buttonAddPlace = formAddPlace.querySelector(".popup__button_add_place");
 const inputAddName = formAddPlace.querySelector(".popup__input_type_card-name");
 const inputAddLink = formAddPlace.querySelector(".popup__input_type_url");
 
+const profileAvatarEdit = document.querySelector(".profile__avatar-button");
+const profileImageModal = document.querySelector(".popup_type_avatar_edit");
+const profileImageForm = profileImageModal.querySelector(".popup__form");
+const profileImageSrc = document.querySelector(".profile__image");
+const profileSubmitButton = document.querySelector(
+  ".popup__button_profile-image"
+);
+
 import "./styles/index.css";
 
 /*import { initialCards } from "./components/cards.js";*/
@@ -48,6 +57,7 @@ import {
   getCards,
   updateProfileData,
   addCard,
+  changeAvatar,
 } from "./components/api.js";
 
 /*initialCards.forEach((cardData) => {
@@ -84,6 +94,7 @@ Promise.all([getProfileData(), getCards()])
     // Записываем полученные данные из объекта пользователя в верстку
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
+    profileImageSrc.style.backgroundImage = `url(${userData.avatar})`;
     // Передаем полученные с сервера данные в функцию отрисовки
     showCards(cardsData, userData._id);
   })
@@ -175,6 +186,29 @@ async function addCardSubmit(evt) {
   closeModal(addCardModal);
   addCardForm.reset();
 }
+
+profileAvatarEdit.addEventListener("click", () => {
+  clearValidation(profileImageForm, profileSubmitButton);
+  openModal(profileImageModal);
+});
+
+function profileFormSubmit(evt) {
+  evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы
+  changeAvatar(imageInput.value) // PATCH
+    .then((data) => {
+      // Если получилось сохранить картинку, то запиши ee в верстку
+      profileImageSrc.style.backgroundImage = `url(${data.avatar})`;
+    })
+    .catch((err) => {
+      console.error(`Ошибка. Возможно не получилось загрузить 
+      аватар в профиль: ${err}`);
+    });
+  closeModal(profileImageModal);
+  profileImageForm.reset();
+}
+
+// Создаем карточку при отправке формы
+profileImageForm.addEventListener("submit", profileFormSubmit);
 
 // Создаем карточку при отправке формы
 addCardForm.addEventListener("submit", addCardSubmit);
