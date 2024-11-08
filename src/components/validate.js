@@ -1,15 +1,3 @@
-// Объект-список классов для валидации
-export const classListForm = {
-  // Выбираем форму, инпуты и кнопку сабмита
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  // Классы для скрытия кнопки, оформления текста ошибкок и скрытия ошибок (через visibility)
-  inactiveButtonClass: "popup__submit_disabled", // Делает оформление кнопки как у недоступной
-  inputErrorClass: "popup__input_type_error", // Делает подчеркивание инпута красным
-  errorClass: "popup__input_type_visible", // Делает текст ошибок видимым
-};
-
 // Функция показа ошибок валидации
 const showValidationError = function (
   formItem,
@@ -34,31 +22,28 @@ const hideValidationError = function (formItem, inputItem, settings) {
 // Функция проверки валидации форм
 const checkInputValidity = function (formItem, inputItem, settings) {
   // Передаем функции нужную форму, нужный импут и объект с данными
-  
-  if (inputItem.validity.valid === false) {
-    // Говорим, что если то, что мы вводим не валидно,то...
-    inputItem.setCustomValidity(""); // Очищаем спан после каждого введенного символа, чтобы ошибка не оставалась
-    const regex = /^[a-zA-Zа-яА-ЯёЁ -]+$/; // Пишем, что поле ввода должно содержать только латиницу, кириллицу, дефисы и пробелы
+  inputItem.setCustomValidity(""); // Очищаем спан после каждого введенного символа, чтобы ошибка не оставалась
+  const regex = /[а-яёa-z\s\-]+$/gi; // Пишем, что поле ввода должно содержать только латиницу, кириллицу, дефисы и пробелы
 
-    if (!inputItem.value) {
-      // Задаем условия для введенного в инпут текста и устанавливаем нужный validationMessage
-      inputItem.setCustomValidity("Вы пропустили это поле.");
-    } else if (
-      inputItem.type === "text" &&
-      (inputItem.value.length < inputItem.minLength ||
-        inputItem.value.length > inputItem.maxLength)
-    ) {
-      inputItem.setCustomValidity(
-        `Длина должна быть от ${inputItem.minLength} до ${inputItem.maxLength} символов.`
-      );
-    } else if (inputItem.type === "text" && !regex.test(inputItem.value)) {
-      inputItem.setCustomValidity(
-        "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-      );
-    } else if (inputItem.type === "url" && !inputItem.validity.valid) {
-      inputItem.setCustomValidity("Введите адрес сайта.");
-    }
-
+  if (!inputItem.value) {
+    // Задаем условия для введенного в инпут текста и устанавливаем нужный validationMessage
+    inputItem.setCustomValidity("Вы пропустили это поле.");
+  } else if (
+    inputItem.type === "text" &&
+    (inputItem.value.length < inputItem.minLength ||
+      inputItem.value.length > inputItem.maxLength)
+  ) {
+    inputItem.setCustomValidity(
+      `Длина должна быть от ${inputItem.minLength} до ${inputItem.maxLength} символов.`
+    );
+  } else if (inputItem.type === "text" && !regex.test(inputItem.value)) {
+    inputItem.setCustomValidity(
+      "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+    );
+  } else if (inputItem.type === "url" && !inputItem.validity.valid) {
+    inputItem.setCustomValidity("Введите адрес сайта.");
+  }
+  if (!inputItem.validity.valid) {
     showValidationError(
       // Наконец-то вызываем функцию, чтобы она показала кастомное сообщение
       formItem,
@@ -121,14 +106,15 @@ const toggleButtonState = function (formItem, buttonItem, settings) {
 };
 
 // Функция, которую вызывает перед открытием модалки, чтобы очистить все ошибки
-export const clearValidation = function (formItem, buttonItem) {
-  const input = formItem.querySelector(".popup__input");
-  input.classList.remove(classListForm.inputErrorClass);
-  const errorItem = formItem.querySelector(`.${input.id}-error`);
-  if (errorItem) {
-    errorItem.textContent = "";
-  }
+export const clearValidation = function (formItem, buttonItem, settings) {
+  const inputs = formItem.querySelectorAll(".popup__input");
+  inputs.forEach((input) => {
+    input.classList.remove(settings.inputErrorClass);
+    const errorItem = formItem.querySelector(`.${input.id}-error`);
+    if (errorItem) {
+      errorItem.textContent = "";
+    }
+  });
   buttonItem.classList.add("popup__submit_disabled");
   buttonItem.setAttribute("disabled", "true");
 };
-

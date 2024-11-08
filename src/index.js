@@ -42,6 +42,17 @@ const profileSubmitButton = document.querySelector(
   ".popup__button_profile-image"
 );
 
+const classListForm = {
+  // Выбираем форму, инпуты и кнопку сабмита
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  // Классы для скрытия кнопки, оформления текста ошибкок и скрытия ошибок (через visibility)
+  inactiveButtonClass: "popup__submit_disabled", // Делает оформление кнопки как у недоступной
+  inputErrorClass: "popup__input_type_error", // Делает подчеркивание инпута красным
+  errorClass: "popup__input_type_visible", // Делает текст ошибок видимым
+};
+
 import "./styles/index.css";
 
 /*import { initialCards } from "./components/cards.js";*/
@@ -50,7 +61,6 @@ import { openModal, closeModal } from "./components/modal.js";
 import {
   enableValidationCheck,
   clearValidation,
-  classListForm,
 } from "./components/validate.js";
 import {
   getProfileData,
@@ -107,7 +117,7 @@ Promise.all([getProfileData(), getCards()])
 
 //Открытие попапа при клике на кнопку EDIT
 editButton.addEventListener("click", function () {
-  clearValidation(formEditProfile, buttonEditProfile);
+  clearValidation(formEditProfile, buttonEditProfile, classListForm);
   openModal(editModal);
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
@@ -115,7 +125,7 @@ editButton.addEventListener("click", function () {
 
 //Открытие попапа при клике на кнопку ADD
 addButton.addEventListener("click", function () {
-  clearValidation(formAddPlace, buttonAddPlace);
+  clearValidation(formAddPlace, buttonAddPlace, classListForm);
   openModal(addCardModal);
 });
 
@@ -153,42 +163,42 @@ function editFormSubmit(evt) {
       profileTitle.textContent = data.name;
       profileDescription.textContent = data.about;
     })
+    .then(closeModal(editModal))
+    .then(clearValidation(formEditProfile, buttonEditProfile, classListForm))
     .catch((err) => {
       console.error(`Ошибка. Возможно не получилось загрузить 
       данные пользователя в профиль: ${err}`);
     });
-  closeModal(editModal);
 }
 
 // Слушает, что делать при нажатии на кнопку отправки
 formEditElement.addEventListener("submit", editFormSubmit);
 
-async function addCardSubmit(evt) {
+function addCardSubmit(evt) {
   //
   evt.preventDefault();
-  const me = await getProfileData(); // Объект с моими данными
   addCard(inputAddName.value, inputAddLink.value) // POST
     .then((card) => {
       // Если получилось, создай новую карточку (передали данные)
       const newCardElement = createCard(
         card,
-        me._id, // Это моя карточка
+        card.owner._id, // Это моя карточка
         deleteCard,
         openImage,
         switchLike
       );
       placesList.prepend(newCardElement);
-    });
-  (err) => {
-    console.error(`Ошибка. Возможно не получилось запостить 
+    })
+    .then(closeModal(addCardModal))
+    .then(addCardForm.reset())
+    .catch((err) => {
+      console.error(`Ошибка. Возможно не получилось запостить 
     карточку: ${err}`);
-  };
-  closeModal(addCardModal);
-  addCardForm.reset();
+    });
 }
 
 profileAvatarEdit.addEventListener("click", () => {
-  clearValidation(profileImageForm, profileSubmitButton);
+  clearValidation(profileImageForm, profileSubmitButton, classListForm);
   openModal(profileImageModal);
 });
 
@@ -199,12 +209,12 @@ function profileFormSubmit(evt) {
       // Если получилось сохранить картинку, то запиши ee в верстку
       profileImageSrc.style.backgroundImage = `url(${data.avatar})`;
     })
+    .then(closeModal(profileImageModal))
+    .then(profileImageForm.reset())
     .catch((err) => {
       console.error(`Ошибка. Возможно не получилось загрузить 
       аватар в профиль: ${err}`);
     });
-  closeModal(profileImageModal);
-  profileImageForm.reset();
 }
 
 // Создаем карточку при отправке формы
