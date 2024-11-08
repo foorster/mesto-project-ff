@@ -157,6 +157,8 @@ popupList.forEach((el) => {
 // Обработчик «отправки» формы Edit
 function editFormSubmit(evt) {
   evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы
+  const textOnSubmitButton = buttonEditProfile.textContent;
+  buttonEditProfile.textContent = "Сохранение ...";
   updateProfileData(nameInput.value, jobInput.value) // PATCH
     .then((data) => {
       // Если получилось сохранить данные, то запиши их в верстку
@@ -168,15 +170,18 @@ function editFormSubmit(evt) {
     .catch((err) => {
       console.error(`Ошибка. Возможно не получилось загрузить 
       данные пользователя в профиль: ${err}`);
-    });
+    })
+    .finally((buttonEditProfile.textContent = textOnSubmitButton));
 }
+
 
 // Слушает, что делать при нажатии на кнопку отправки
 formEditElement.addEventListener("submit", editFormSubmit);
 
 function addCardSubmit(evt) {
-  //
   evt.preventDefault();
+  const textOnSubmitButton = buttonAddPlace.textContent;
+  buttonAddPlace.textContent = "Сохранение ...";
   addCard(inputAddName.value, inputAddLink.value) // POST
     .then((card) => {
       // Если получилось, создай новую карточку (передали данные)
@@ -194,8 +199,10 @@ function addCardSubmit(evt) {
     .catch((err) => {
       console.error(`Ошибка. Возможно не получилось запостить 
     карточку: ${err}`);
-    });
+    })
+    .finally((buttonAddPlace.textContent = textOnSubmitButton));
 }
+
 
 profileAvatarEdit.addEventListener("click", () => {
   clearValidation(profileImageForm, profileSubmitButton, classListForm);
@@ -204,6 +211,8 @@ profileAvatarEdit.addEventListener("click", () => {
 
 function profileFormSubmit(evt) {
   evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы
+  const textOnSubmitButton = profileSubmitButton.textContent;
+  profileSubmitButton.textContent = "Сохранение ...";
   changeAvatar(imageInput.value) // PATCH
     .then((data) => {
       // Если получилось сохранить картинку, то запиши ee в верстку
@@ -214,7 +223,8 @@ function profileFormSubmit(evt) {
     .catch((err) => {
       console.error(`Ошибка. Возможно не получилось загрузить 
       аватар в профиль: ${err}`);
-    });
+    })
+    .finally((profileSubmitButton.textContent = textOnSubmitButton));
 }
 
 // Создаем карточку при отправке формы
