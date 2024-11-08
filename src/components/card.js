@@ -17,7 +17,6 @@ export function createCard(
   cardElement.querySelector(".card__title").textContent = cardData.name;
 
   const deleteButton = cardElement.querySelector(".card__delete-button");
-
   if (userId === cardData.owner._id) {
     // Если айди пользователя это мой айди, то повесь слушатель удаления на кнопку корзины
     if (deleteButton) {
@@ -31,16 +30,16 @@ export function createCard(
     }
   }
 
+  // Заполняем счетчики лайков
   const likeCounter = cardElement.querySelector(".card__like-counter");
   if (likeCounter) {
     likeCounter.textContent = cardData.likes.length;
   }
-
+  // Вешаем слушатель клика на лайк карточки
   const likeButton = cardElement.querySelector(".card__like-button");
   likeButton.addEventListener("click", (evt) => {
     switchLike(evt, cardData._id);
   });
-
   // Если лайк мой, закрась его
   const result = cardData.likes.some((like) => like._id === userId);
   if (result) {

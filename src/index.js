@@ -54,7 +54,6 @@ const classListForm = {
 };
 
 import "./styles/index.css";
-
 /*import { initialCards } from "./components/cards.js";*/
 import { createCard, deleteCard, switchLike } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
@@ -174,7 +173,6 @@ function editFormSubmit(evt) {
     .finally((buttonEditProfile.textContent = textOnSubmitButton));
 }
 
-
 // Слушает, что делать при нажатии на кнопку отправки
 formEditElement.addEventListener("submit", editFormSubmit);
 
@@ -203,7 +201,6 @@ function addCardSubmit(evt) {
     .finally((buttonAddPlace.textContent = textOnSubmitButton));
 }
 
-
 profileAvatarEdit.addEventListener("click", () => {
   clearValidation(profileImageForm, profileSubmitButton, classListForm);
   openModal(profileImageModal);
@@ -227,7 +224,7 @@ function profileFormSubmit(evt) {
     .finally((profileSubmitButton.textContent = textOnSubmitButton));
 }
 
-// Создаем карточку при отправке формы
+// Меняем аватарку при отпрвки формы
 profileImageForm.addEventListener("submit", profileFormSubmit);
 
 // Создаем карточку при отправке формы
