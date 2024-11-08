@@ -163,14 +163,13 @@ function editFormSubmit(evt) {
       // Если получилось сохранить данные, то запиши их в верстку
       profileTitle.textContent = data.name;
       profileDescription.textContent = data.about;
+      closeModal(editModal);
     })
-    .then(closeModal(editModal))
-    .then(clearValidation(formEditProfile, buttonEditProfile, classListForm))
     .catch((err) => {
       console.error(`Ошибка. Возможно не получилось загрузить 
       данные пользователя в профиль: ${err}`);
     })
-    .finally((buttonEditProfile.textContent = textOnSubmitButton));
+    .finally(() => (buttonEditProfile.textContent = textOnSubmitButton));
 }
 
 // Слушает, что делать при нажатии на кнопку отправки
@@ -191,14 +190,14 @@ function addCardSubmit(evt) {
         switchLike
       );
       placesList.prepend(newCardElement);
+      closeModal(addCardModal);
+      addCardForm.reset();
     })
-    .then(closeModal(addCardModal))
-    .then(addCardForm.reset())
     .catch((err) => {
       console.error(`Ошибка. Возможно не получилось запостить 
     карточку: ${err}`);
     })
-    .finally((buttonAddPlace.textContent = textOnSubmitButton));
+    .finally(() => (buttonAddPlace.textContent = textOnSubmitButton));
 }
 
 profileAvatarEdit.addEventListener("click", () => {
@@ -214,14 +213,14 @@ function profileFormSubmit(evt) {
     .then((data) => {
       // Если получилось сохранить картинку, то запиши ee в верстку
       profileImageSrc.style.backgroundImage = `url(${data.avatar})`;
+      closeModal(profileImageModal);
+      profileImageForm.reset();
     })
-    .then(closeModal(profileImageModal))
-    .then(profileImageForm.reset())
     .catch((err) => {
       console.error(`Ошибка. Возможно не получилось загрузить 
       аватар в профиль: ${err}`);
     })
-    .finally((profileSubmitButton.textContent = textOnSubmitButton));
+    .finally(() => (profileSubmitButton.textContent = textOnSubmitButton));
 }
 
 // Меняем аватарку при отпрвки формы

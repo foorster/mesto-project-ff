@@ -37,8 +37,8 @@ export function createCard(
   }
   // Вешаем слушатель клика на лайк карточки
   const likeButton = cardElement.querySelector(".card__like-button");
-  likeButton.addEventListener("click", (evt) => {
-    switchLike(evt, cardData._id);
+  likeButton.addEventListener("click", () => {
+    switchLike(likeButton, likeCounter, cardData._id);
   });
   // Если лайк мой, закрась его
   const result = cardData.likes.some((like) => like._id === userId);
@@ -62,16 +62,12 @@ export function deleteCard(evt, cardId) {
     });
 }
 
-export function switchLike(evt, cardId) {
-  const closestCard = evt.target.closest(".card");
-  const likeButton = closestCard.querySelector(".card__like-button");
-  const childLikeCounter = closestCard.querySelector(".card__like-counter");
-  likeButton.classList.toggle("card__like-button_is-active");
-
-  if (likeButton.classList.contains("card__like-button_is-active")) {
+export function switchLike(likeButton, childLikeCounter, cardId) {
+  if (!likeButton.classList.contains("card__like-button_is-active")) {
     putLikeCard(cardId)
       .then((cardData) => {
         childLikeCounter.textContent = cardData.likes.length;
+        likeButton.classList.toggle("card__like-button_is-active");
       })
       .catch((err) => {
         console.error(`Ошибка. Данные о лайке не подгрузились: ${err}`);
@@ -80,6 +76,7 @@ export function switchLike(evt, cardId) {
     delDislikeCard(cardId)
       .then((cardData) => {
         childLikeCounter.textContent = cardData.likes.length;
+        likeButton.classList.toggle("card__like-button_is-active");
       })
       .catch((err) => {
         console.error(`Ошибка. Данные о дизлайке не подгрузились: ${err}`);

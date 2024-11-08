@@ -23,7 +23,7 @@ const hideValidationError = function (formItem, inputItem, settings) {
 const checkInputValidity = function (formItem, inputItem, settings) {
   // Передаем функции нужную форму, нужный импут и объект с данными
   inputItem.setCustomValidity(""); // Очищаем спан после каждого введенного символа, чтобы ошибка не оставалась
-  const regex = /[а-яёa-z\s\-]+$/gi; // Пишем, что поле ввода должно содержать только латиницу, кириллицу, дефисы и пробелы
+  const regex = /^[а-яёa-z\s\-]+$/gi; // Пишем, что поле ввода должно содержать только латиницу, кириллицу, дефисы и пробелы
 
   if (!inputItem.value) {
     // Задаем условия для введенного в инпут текста и устанавливаем нужный validationMessage
@@ -109,11 +109,7 @@ const toggleButtonState = function (formItem, buttonItem, settings) {
 export const clearValidation = function (formItem, buttonItem, settings) {
   const inputs = formItem.querySelectorAll(".popup__input");
   inputs.forEach((input) => {
-    input.classList.remove(settings.inputErrorClass);
-    const errorItem = formItem.querySelector(`.${input.id}-error`);
-    if (errorItem) {
-      errorItem.textContent = "";
-    }
+    hideValidationError(formItem, input, settings)
   });
   buttonItem.classList.add("popup__submit_disabled");
   buttonItem.setAttribute("disabled", "true");
